@@ -1,91 +1,347 @@
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+var tilesprite;
+
+function preload() {
+	game.cache.removeAll;
+	game.load.spritesheet('unicorn', 'assets/unicorn.png', 206, 110);
+	game.load.spritesheet('dash', 'assets/unicorn.png', 479, 181);
+	game.load.image('background1', 'assets/background1.png');
+	game.load.image('mountain', 'assets/mountain.png');
+	game.load.image('platform1', 'assets/platform1.png');
+	game.load.image('platform2', 'assets/platform2.png');
+	game.load.image('platform3', 'assets/platform3.png');
+	game.load.physics('physics', 'assets/physics.json');
+	game.load.image('platform4', 'assets/platform4.png');
+	game.load.image('platform5', 'assets/platform5.png');
+	game.load.image('platform6', 'assets/platform6.png');
+	game.load.image('platform7', 'assets/platform7.png');
+	game.load.image('pentagram', 'assets/pentagram.png');
+	game.load.image('start', 'assets/start2.png');
+	game.load.image('robotstart', 'assets/robotstart2.png');
+	game.load.spritesheet('explosion', 'assets/explosion.png', 64, 63);
+	game.load.audio('odin', 'assets/odin.mp3');
+	game.load.audio('dash', 'assets/dash.wav');
+	game.load.audio('explosion', 'assets/explosion.wav');
+
+}
+
+var explosion;
+var explosionSound;
+var dashSound;
+var player;
+var playerMaterial;
+var platforms;
+var platform1;
+var platform2;
+var cursors;
+var dashing = false;
+var platformMaterial;
+var pentagram;
+var score = 0;
+var scoreText;
+var addScore = 100;
+var velocity = -400;
+var dead = false;
+var jumpButton;
+var dashButton;
+var spaceButton;
+var label;
+var startScreen;
+var startLogo;
+var startText;
+var startText2;
+var startText3;
+var start = false;
+
+function create() {
+
+    game.physics.startSystem(Phaser.Physics.P2JS);
+
+		game.physics.p2.gravity.y = 1000;
+		game.physics.p2.friction = 0;
+		game.physics.p2.restitution = 0;
+
+		game.world.setBounds(0, -100, 800, 800);
+		game.physics.p2.setBoundsToWorld(true, false, true, false);
+
+    background = game.add.tileSprite(0, 100, 800, 700, 'background1');
+		mountain = game.add.tileSprite(0, 100, 800, 700, 'mountain');
+
+		playerMaterial = game.physics.p2.createMaterial('player');
+		platformMaterial = game.physics.p2.createMaterial('platform');
+		explosionMaterial = game.physics.p2.createMaterial('explosion');
+
+		var playerPlatformCM = game.physics.p2.createContactMaterial(playerMaterial, platformMaterial);
+		playerPlatformCM.restitution = 0;
+		playerPlatformCM.friction = 0;
+		playerPlatformCM.stiffness = 1000000;
+		playerPlatformCM.damping = 0;
+		playerPlatformCM.relaxation = 4;
+		playerPlatformCM.contactSkinSize =  0;
+		playerPlatformCM.frictionRelaxation = 4;
+		playerPlatformCM.frictionStiffness = 1000000;
+
+		var playerExplosionCM = game.physics.p2.createContactMaterial(playerMaterial, explosionMaterial);
+		playerExplosionCM.contactSkinSize =  10000000;
+
+		var music = game.add.audio('odin');
+		music.loop = true;
+		music.play();
+		explosionSound = game.add.audio('explosion');
+		dashSound = game.add.audio('dash');
+		jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.Z);
+		dashButton = game.input.keyboard.addKey(Phaser.Keyboard.X);
+		spaceButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+		scoreText = game.add.text(game.camera.view.width - 780, game.camera.view.y, 'score: ' + score, { fontSize: '32px', fill: 'white' });
+
+		startScreen = game.add.sprite(0, 0, 'start');
+		startLogo = game.add.sprite(80, 100, 'robotstart')
+		startLogo.scale.setTo(1.1, 1.1)
+		startText = game.add.text(150, 500, "Press Space to Start", { fontSize: '50px', fill: 'white',align: 'center' });
+		startText2 = game.add.text(0, 350, "Your Death Awaits", { font: "papyrus",fontSize: '95px', fill: 'black',align: 'center' });
+    startText3 = game.add.text(100, 450, "(Z) to jump, (X) to dash through obstacles", { fontSize: '30px', fill: 'white',align: 'center' });
+}
 
 
-document.addEventListener("DOMContentLoaded", function () {
-  var canvas = document.getElementsByTagName("canvas")[0],
-      ctx = canvas.getContext("2d"),
-      height = 800,
-      width = 600;
 
 
-  // canvas.height = height;
-  // canvas.width = width;
+function update() {
+	if (spaceButton.isDown && !start) {
+		startScreen.destroy();
+		startLogo.destroy();
+		startText.destroy();
+		startText2.destroy();
+    startText3.destroy();
+		start = true;
+		startGame();
+	}
+	if (start) {
+		game.world.bringToTop(scoreText);
 
-  /*
-   * width and height are the overall width and height we have to work with, displace is
-   * the maximum deviation value. This stops the terrain from going out of bounds if we choose
-   */
+		if (dead) {
+			velocity = 0;
+			// player.body.mass = 0
+			player.body.kinematic = true;
+			player.visible = false;
+			player.alpha = 0;
+		}
 
-   function terrain(width, height, displace, roughness, seed) {
-       var points = [],
-           // Gives us a power of 2 based on our width
-           power = Math.pow(2, Math.ceil(Math.log(width) / (Math.log(2)))),
-           seed = seed || {
-               s: height / 2 + (Math.random() * displace * 2) - displace,
-           };
+		if (player.body) player.body.x = 100;
+		background.tilePosition.x -= 1;
+		mountain.tilePosition.x -= 2;
 
-       // Set the initial left point
-       points[0] = seed.s;
+		scoreText.position.y = game.camera.view.y
+		if (pentagram.body) {
+			pentagram.body.velocity.x = velocity;
 
-       // set the initial right point
-       points[power] = height / 2 + (Math.random() * displace * 2) - displace;
+		}
 
-       displace *= roughness;
+		if (dashButton.isDown && !dashing)
+	    {
+	        game.physics.p2.gravity.y = 0;
+					if (player.body) player.body.velocity.y = 0;
+					dashing = true;
+					dashSound.play();
+					player.loadTexture('dash');
+					velocity -= 500;
+	      	setTimeout(function () {
+						game.physics.p2.gravity.y = 1000;
+						player.loadTexture('unicorn');
+						dashing = false;
+						if (!dead) {
+							velocity += 500
+						} else {
+							velocity = 0;
+						}
+	      	}, 500)
+	    }
 
-       // Increase the number of segments
-       for (var i = 1; i < power; i *= 2) {
-           // Iterate through each segment calculating the center point
-           for (var j = (power / i) / 2; j < power; j += power / i) {
-               points[j] = ((points[j - (power / i) / 2] + points[j + (power / i) / 2]) / 2);
-               points[j] += (Math.random() * displace * 2) - displace
-           }
-           // reduce our random range
-           displace *= roughness;
-       }
-       return points;
-   }
+		if (player.body && !dead && (checkIfCollidingY(player, platform1) || player.body.y > 800)) {
+			if (!dead) die();
+		}
 
-   // get the points
-   var terPoints = terrain(width, height, height / 3, 0.5),
-       terPoints2 = terrain(width, height, height / 3, 0.5, {s : terPoints[terPoints.length - 1], e : 0});
+		if (pentagram.body && player.body && checkIfCollidingX(player, pentagram) && !dashing) {
+			if (!dead) die();
+		} else if (pentagram.body && player.body && checkIfCollidingX(player, pentagram) && dashing) {
+			explosionSound.play();
+			explosion = game.add.sprite(pentagram.body.x, pentagram.body.y, 'explosion');
+      explosion.scale.setTo(2, 2)
+			explosion.animations.add('explode', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24], 25, true);
+			explosion.animations.play('explode');
 
-   var offset = 0;
+			game.physics.p2.enable([explosion], false);
+			explosion.body.setMaterial(explosionMaterial);
+			explosion.body.velocity.x = velocity;
+			explosion.body.static = true;
+			explosion.body.mass = 0;
+			// explosion.body.kinematic = true;
 
-   function scrollTerrain() {
-      ctx.clearRect(0, 0, width, height);
-      offset -= 3;
+			setTimeout(function () {
+				explosion.destroy();
+			}, 1000);
 
-      // draw the first half
-      ctx.beginPath();
-      ctx.moveTo(offset, terPoints[0]);
-      for (var t = 0; t < terPoints.length; t++) {
-          ctx.lineTo(t + offset, terPoints[t]);
-      }
+			var pentagramY = pentagram.body.y;
+			pentagram.destroy();
+			score += addScore;
+			var plusScore = game.add.text(game.camera.view.x + 300, pentagramY, '+' + addScore, { fontSize: Math.log(addScore) / Math.log(5) * 8 + 'px', fill: 'white' });
+			setTimeout(function () {
+				plusScore.destroy();
+			}, 1000)
+			addScore += 100;
+			scoreText.text = 'score: ' + score;
 
-      for (t = 0; t < terPoints2.length; t++) {
-          ctx.lineTo((terPoints.length - 1) + offset + t, terPoints2[t]);
-      }
+		}
 
-      // finish creating the rect so we can fill it
-      ctx.lineTo(width + offset+t, canvas.height);
-      ctx.lineTo(offset, canvas.height);
-      ctx.closePath();
-      ctx.fill();
+		var pentagramPositions = {
+			2: [game.world.width + 1170, game.world.height - 750],
+			3: [game.world.width + 1670, game.world.height - 250],
+			4: [game.world.width + 1470, game.world.height - 320],
+			5: [game.world.width + 1470, game.world.height - 380],
+			6: [game.world.width + 1700, game.world.height - 450],
+			7: [game.world.width + 1450, game.world.height - 550],
 
-      /*
-      * if the number of our points on the 2nd array is less than or equal to our screen width
-      * we reset the offset to 0, copy terpoints2 to terpoints,
-      * and gen a new set of points for terpoints 2
-      */
+		}
 
-      if(terPoints2.length-1 + width + offset <= width){
-          terPoints = terPoints2;
-          terPoints2 = terrain(width, height, height / 3, 0.5, {s : terPoints[terPoints.length - 1]});
-          offset = 0;
-      }
+		if (platform1.position.x < -500) {
+			var num = Math.round(Math.random() * (7 - 2) + 2);
+			platform2 = game.add.sprite(game.world.width + 1200, game.world.height - 300, 'platform' + num);
+			pentagram = game.add.sprite(pentagramPositions[num][0], pentagramPositions[num][1], 'pentagram')
 
-      requestAnimationFrame(scrollTerrain);
-  }
 
-  scrollTerrain();
+			game.physics.p2.enable([platform2, pentagram], false);
+			platform2.body.clearShapes();
+			platform2.body.loadPolygon('physics', 'platform' + num, false);
 
-})
+			platform2.body.setMaterial(platformMaterial);
+
+			velocity -= 30;
+			platform2.body.static = true;
+			pentagram.body.static = true;
+			platform2.body.velocity.x = velocity;
+			platform1 = platform2;
+		}
+
+		if (spaceButton.isDown && dead) {
+			restartGame();
+		}
+
+		if (dashing) {
+
+			player.animations.play('dash');
+		} else {
+
+
+			// player.animations.stop();
+			player.animations.play('run');
+
+		}
+
+
+		if (jumpButton.isDown && player.body)
+		{
+				player.body.moveUp(400);
+		} else {
+			platform1.body.velocity.x = velocity;
+		}
+
+	}
+
+}
+
+function checkIfCollidingY(object1, object2) {
+
+    var yAxis = p2.vec2.fromValues(0, -1);
+    var result = false;
+
+    for (var i = 0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++) {
+        var c = game.physics.p2.world.narrowphase.contactEquations[i];
+
+				if (c.bodyA === object1.body.data && c.bodyB === object2.body.data || c.bodyB === object1.body.data && c.bodyA === object2.body.data) {
+            var d = p2.vec2.dot(c.normalA, yAxis); // Normal dot Y-axis
+            if (c.bodyA === object1.body.data) d *= -1;
+            if (d > 0.85) result = true;
+        }
+    }
+
+    return result;
+
+}
+
+function checkIfCollidingX(object1, object2) {
+
+    var xAxis = p2.vec2.fromValues(1, 0);
+    var result = false;
+
+    for (var i = 0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++)
+    {
+        var c = game.physics.p2.world.narrowphase.contactEquations[i];
+
+        if (c.bodyA === object1.body.data && c.bodyB === object2.body.data || c.bodyB === object1.body.data && c.bodyA === object2.body.data)
+        {
+            var d = p2.vec2.dot(c.normalA, xAxis); // Normal dot Y-axis
+            if (c.bodyA === object1.body.data) d *= -1;
+            if (d > 0.999) result = true;
+        }
+    }
+
+    return result;
+
+}
+
+function startGame() {
+	platform1 = game.add.sprite(800, 460, 'platform1');
+	pentagram = game.add.sprite(1200, 280, 'pentagram');
+	player = game.add.sprite(100, 260, 'unicorn');
+	game.physics.p2.enable([player, pentagram, platform1], false);
+
+	platform1.body.clearShapes();
+	platform1.body.loadPolygon('physics', 'platform1');
+
+	player.body.clearShapes();
+	player.body.loadPolygon('physics', 'unicorn');
+
+	player.body.restitution = 0;
+	player.body.fixedRotation = true;
+	platform1.body.restitution = 0;
+
+	platform1.body.static = true;
+	pentagram.body.static = true;
+	platform1.body.data.gravityScale = 0;
+
+	player.animations.add('run', [26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0], 50, true);
+	player.animations.add('dash', [20, 21, 22,23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35], 30, true);
+
+	game.camera.follow(player);
+
+	player.body.setMaterial(playerMaterial);
+	platform1.body.setMaterial(platformMaterial);
+}
+
+function restartGame() {
+
+	explosion.destroy();
+	label.destroy();
+	if (platform1) platform1.destroy();
+	if (pentagram) pentagram.destroy();
+	player.destroy();
+	dead = false;
+	velocity = -400;
+	score = 0;
+	addScore = 100;
+	scoreText.text = 'score: ' + score;
+	startGame();
+
+}
+
+function die() {
+	dead = true;
+	game.camera.follow(null);
+	explosionSound.play();
+	explosion = game.add.sprite(player.body.x - 60, player.body.y - 60, 'explosion');
+  explosion.scale.setTo(2, 2);
+	explosion.animations.add('explode', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24], 30, false);
+	explosion.animations.play('explode');
+	label = game.add.text(game.camera.view.x + 400, game.camera.view.y + 300, 'High Score: '+ score +'\nGAME OVER\nPress SPACE to restart',{ font: '30px Lucida Console', fill: '#fff', align: 'center'});
+	label.anchor.setTo(0.5, 0.5);
+}
