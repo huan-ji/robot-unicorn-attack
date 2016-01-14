@@ -5,6 +5,9 @@ Robot Unicorn Attack Extreme Edition is a Javascript side scroll game inspired b
 ##Technical Features
 
 -Provides accurate collision detection against complex terrain through polygonal texture mapping with Phaser P2 physics engine
+
 -Three layers of parallax environment using Phaser tilesprite animation for 3D immersion
 
-##[Live Link]: http://huan-ji.github.io/robot-unicorn-attack/
+##[Live Link][link]
+
+[link]: http://huan-ji.github.io/robot-unicorn-attack/
