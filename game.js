@@ -4,6 +4,13 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO);
 var BootState = {
   preload: function() {
     game.load.image('preload', 'assets/loadbar.png')
+    game.load.spritesheet('unicorn', 'assets/unicorn.png', 206, 110);
+		game.load.spritesheet('dash', 'assets/unicorn.png', 479, 181);
+		game.load.image('background1', 'assets/background1.png');
+		game.load.image('mountain', 'assets/mountain.png');
+		game.load.image('platform1', 'assets/platform1.png');
+		game.load.image('platform2', 'assets/platform2.png');
+		game.load.image('platform3', 'assets/platform3.png');
   },
 
 	create: function() {
@@ -13,20 +20,12 @@ var BootState = {
 
 var PreloadState = {
 	preload: function() {
-		var preloadBar = game.add.sprite(game.world.centerX, game.world.centerY, 'preload');
+		var preloadBar = game.add.sprite(game.world.centerX - 200, game.world.centerY, 'preload');
 		var loadText = game.add.text(game.world.centerX, game.world.centerY - 100, "Game Loading...", { fontSize: '50px', fill: 'white',align: 'center' });
-    preloadBar.anchor.setTo(0.5, 0.5);
 		loadText.anchor.setTo(0.5, 0.5);
 		game.load.setPreloadSprite(preloadBar);
 
-		game.load.spritesheet('unicorn', 'assets/unicorn.png', 206, 110);
-		game.load.spritesheet('dash', 'assets/unicorn.png', 479, 181);
-		game.load.image('background1', 'assets/background1.png');
-		game.load.image('mountain', 'assets/mountain.png');
-		game.load.image('platform1', 'assets/platform1.png');
-		game.load.image('platform2', 'assets/platform2.png');
-		game.load.image('platform3', 'assets/platform3.png');
-    game.load.audio('odin', 'assets/odin4.mp3');
+		game.load.audio('odin', 'assets/odin4.mp3');
 		game.load.physics('physics', 'assets/physics.json');
 		game.load.image('platform4', 'assets/platform4.png');
 		game.load.image('platform5', 'assets/platform5.png');
