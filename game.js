@@ -3,7 +3,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO);
 
 var BootState = {
   preload: function() {
-    game.load.image('preload', 'assets/loadbar.png')
+    game.load.image('preload', 'assets/platform.png')
   },
 
 	create: function() {
