@@ -3,7 +3,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO);
 
 var BootState = {
   preload: function() {
-    game.load.image('preload', 'assets/platform.png')
+    game.load.image('preload', 'assets/loadbar.png')
   },
 
 	create: function() {
@@ -16,7 +16,6 @@ var PreloadState = {
 		var preloadBar = game.add.sprite(game.world.centerX - 200, game.world.centerY, 'preload');
 		var loadText = game.add.text(game.world.centerX, game.world.centerY - 100, "Game Loading...", { fontSize: '50px', fill: 'white',align: 'center' });
 		loadText.anchor.setTo(0.5, 0.5);
-		// preloadBar.anchor.setTo(0.5, 0);
 		game.load.setPreloadSprite(preloadBar);
 
 		game.load.spritesheet('unicorn', 'assets/unicorn.png', 206, 110);
@@ -209,7 +208,7 @@ var GameState = {
 				var pentagramY = pentagram.body.y;
 				pentagram.destroy();
 				score += addScore;
-				var plusScore = game.add.text(game.camera.view.x + 300, pentagramY, '+' + addScore, { fontSize: Math.log(addScore) / Math.log(5) * 8 + 'px', fill: 'white' });
+				var plusScore = game.add.text(game.camera.view.x + 300, pentagramY, '+' + addScore, { fontSize: Math.log(addScore) / Math.log(4) * 8 + 'px', fill: 'white' });
 				setTimeout(function () {
 					plusScore.destroy();
 				}, 1000)
