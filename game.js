@@ -34,7 +34,7 @@ var PreloadState = {
 		game.load.image('start', 'assets/start2.png');
 		game.load.image('robotstart', 'assets/robotstart2.png');
 		game.load.spritesheet('explosion', 'assets/explosion.png', 64, 63);
-		game.load.audio('odin', 'assets/odin.mp3');
+		game.load.audio('odin', 'assets/odin2.mp3');
 		game.load.audio('dash', 'assets/dash.wav');
 		game.load.audio('explosion', 'assets/explosion.wav');
 	},
