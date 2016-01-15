@@ -3,14 +3,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO);
 
 var BootState = {
   preload: function() {
-    game.load.image('preload', 'assets/platform.png')
-    game.load.spritesheet('unicorn', 'assets/unicorn.png', 206, 110);
-		game.load.spritesheet('dash', 'assets/unicorn.png', 479, 181);
-		game.load.image('background1', 'assets/background1.png');
-		game.load.image('mountain', 'assets/mountain.png');
-		game.load.image('platform1', 'assets/platform1.png');
-		game.load.image('platform2', 'assets/platform2.png');
-		game.load.image('platform3', 'assets/platform3.png');
+    game.load.image('preload', 'assets/loadbar.png')
     game.load.audio('odin', 'assets/odin4.mp3');
   },
 
@@ -37,6 +30,13 @@ var PreloadState = {
 		game.load.spritesheet('explosion', 'assets/explosion.png', 64, 63);
 		game.load.audio('dash', 'assets/dash.wav');
 		game.load.audio('explosion', 'assets/explosion.wav');
+    game.load.spritesheet('unicorn', 'assets/unicorn.png', 206, 110);
+		game.load.spritesheet('dash', 'assets/unicorn.png', 479, 181);
+		game.load.image('background1', 'assets/background1.png');
+		game.load.image('mountain', 'assets/mountain.png');
+		game.load.image('platform1', 'assets/platform1.png');
+		game.load.image('platform2', 'assets/platform2.png');
+		game.load.image('platform3', 'assets/platform3.png');
 	},
 
 	create: function() {
