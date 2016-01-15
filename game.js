@@ -3,23 +3,9 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO);
 
 var BootState = {
   preload: function() {
-    game.load.image('preload', 'assets/platform.png')
-    game.load.audio('odin', 'assets/odin4.ogg');
-  },
+    game.load.image('preload', 'assets/loadbar.png')
 
-	create: function() {
-		game.state.start('PreloadState')
-	}
-}
-
-var PreloadState = {
-	preload: function() {
-		var preloadBar = game.add.sprite(game.world.centerX - 200, game.world.centerY, 'preload');
-		var loadText = game.add.text(game.world.centerX, game.world.centerY - 100, "Game Loading...", { fontSize: '50px', fill: 'white',align: 'center' });
-		loadText.anchor.setTo(0.5, 0.5);
-		game.load.setPreloadSprite(preloadBar);
-
-		game.load.physics('physics', 'assets/physics.json');
+    game.load.physics('physics', 'assets/physics.json');
 		game.load.image('platform4', 'assets/platform4.png');
 		game.load.image('platform5', 'assets/platform5.png');
 		game.load.image('platform6', 'assets/platform6.png');
@@ -37,6 +23,22 @@ var PreloadState = {
 		game.load.image('platform1', 'assets/platform1.png');
 		game.load.image('platform2', 'assets/platform2.png');
 		game.load.image('platform3', 'assets/platform3.png');
+  },
+
+	create: function() {
+		game.state.start('PreloadState')
+	}
+}
+
+var PreloadState = {
+	preload: function() {
+		var preloadBar = game.add.sprite(game.world.centerX - 200, game.world.centerY, 'preload');
+		var loadText = game.add.text(game.world.centerX, game.world.centerY - 100, "Game Loading...", { fontSize: '50px', fill: 'white',align: 'center' });
+		loadText.anchor.setTo(0.5, 0.5);
+		game.load.setPreloadSprite(preloadBar);
+
+    game.load.audio('odin', 'assets/odin4.mp3');
+
 	},
 
 	create: function() {
