@@ -25,6 +25,7 @@ var PreloadState = {
 		game.load.image('platform1', 'assets/platform1.png');
 		game.load.image('platform2', 'assets/platform2.png');
 		game.load.image('platform3', 'assets/platform3.png');
+    game.load.audio('odin', 'assets/odin3.mp3');
 		game.load.physics('physics', 'assets/physics.json');
 		game.load.image('platform4', 'assets/platform4.png');
 		game.load.image('platform5', 'assets/platform5.png');
@@ -34,7 +35,6 @@ var PreloadState = {
 		game.load.image('start', 'assets/start2.png');
 		game.load.image('robotstart', 'assets/robotstart2.png');
 		game.load.spritesheet('explosion', 'assets/explosion.png', 64, 63);
-		game.load.audio('odin', 'assets/odin2.mp3');
 		game.load.audio('dash', 'assets/dash.wav');
 		game.load.audio('explosion', 'assets/explosion.wav');
 	},
