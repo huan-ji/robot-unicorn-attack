@@ -25,7 +25,7 @@ var PreloadState = {
 		game.load.image('platform1', 'assets/platform1.png');
 		game.load.image('platform2', 'assets/platform2.png');
 		game.load.image('platform3', 'assets/platform3.png');
-    game.load.audio('odin', 'assets/odin3.mp3');
+    game.load.audio('odin', 'assets/odin4.mp3');
 		game.load.physics('physics', 'assets/physics.json');
 		game.load.image('platform4', 'assets/platform4.png');
 		game.load.image('platform5', 'assets/platform5.png');
