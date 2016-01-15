@@ -139,7 +139,7 @@ var GameState = {
 			startText2.destroy();
 			startText3.destroy();
 			start = true;
-			startGame();
+			this.startGame();
 		}
 		if (start) {
 			game.world.bringToTop(scoreText);
@@ -182,13 +182,13 @@ var GameState = {
 				}, 500)
 			}
 
-			if (player.body && !dead && (checkIfCollidingY(player, platform1) || player.body.y > 800)) {
-				if (!dead) die();
+			if (player.body && !dead && (this.checkIfCollidingY(player, platform1) || player.body.y > 800)) {
+				if (!dead) this.die();
 			}
 
-			if (pentagram.body && player.body && checkIfCollidingX(player, pentagram) && !dashing) {
-				if (!dead) die();
-			} else if (pentagram.body && player.body && checkIfCollidingX(player, pentagram) && dashing) {
+			if (pentagram.body && player.body && this.checkIfCollidingX(player, pentagram) && !dashing) {
+				if (!dead) this.die();
+			} else if (pentagram.body && player.body && this.checkIfCollidingX(player, pentagram) && dashing) {
 				explosionSound.play();
 				explosion = game.add.sprite(pentagram.body.x, pentagram.body.y, 'explosion');
 				explosion.scale.setTo(2, 2)
@@ -248,7 +248,7 @@ var GameState = {
 			}
 
 			if (spaceButton.isDown && dead) {
-				restartGame();
+				this.restartGame();
 			}
 
 			if (dashing) {
@@ -355,7 +355,7 @@ var GameState = {
 		score = 0;
 		addScore = 100;
 		scoreText.text = 'score: ' + score;
-		startGame();
+		this.startGame();
 
 	},
 
