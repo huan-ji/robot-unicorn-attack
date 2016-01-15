@@ -3,7 +3,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO);
 
 var BootState = {
   preload: function() {
-    game.load.image('preload', 'assets/platform.png')
+    game.load.image('preload', 'assets/loadbar.png')
   },
 
 	create: function() {
@@ -13,8 +13,9 @@ var BootState = {
 
 var PreloadState = {
 	preload: function() {
-		var preloadBar = game.add.sprite(game.world.centerX - 200, game.world.centerY, 'preload');
+		var preloadBar = game.add.sprite(game.world.centerX, game.world.centerY, 'preload');
 		var loadText = game.add.text(game.world.centerX, game.world.centerY - 100, "Game Loading...", { fontSize: '50px', fill: 'white',align: 'center' });
+    preloadBar.anchor.setTo(0.5, 0.5);
 		loadText.anchor.setTo(0.5, 0.5);
 		game.load.setPreloadSprite(preloadBar);
 
