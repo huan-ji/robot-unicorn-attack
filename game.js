@@ -3,8 +3,8 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO);
 
 var BootState = {
   preload: function() {
-    game.load.image('preload', 'assets/loadbar.png')
-    game.load.audio('odin', 'assets/odin4.mp3');
+    game.load.image('preload', 'assets/platform.png')
+    game.load.audio('odin', 'assets/odin4.ogg');
   },
 
 	create: function() {
