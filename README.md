@@ -15,7 +15,7 @@ below:
 - Provides accurate collision detection against complex terrain through polygonal texture mapping with Phaser P2 physics engine
 - Three layers of parallax environment using Phaser tilesprite animation for 3D immersion
 - Utilizes Phaser.js game states to provide game asset loading screen with progress bar
-- Dynamically adjusting plus score font size based on player combo performance, utilizes logarithmic algorithmic.
+- Dynamically adjusting plus score font size based on player combo performance, utilizes logarithmic algorithm.
 
 ##Technology
 
